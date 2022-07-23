@@ -1,0 +1,365 @@
+<!doctype html>
+<html>
+  <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+
+    <title>结课作品</title>
+
+    <!-- Bootstrap 引入css核心文件 -->
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>
+
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <!-- 导入echart插件 -->
+    <script src="js/echarts.js"></script>
+
+  </head>
+  <body>
+    
+    <!-- background -->
+    <div id="ba-img" style="background-image: url(img/background.jpg);height: 800px;">
+          <!--导航栏  -->
+        <nav class="navbar navbar-default" role="navigation" style="background-color: rgba(15, 18, 19, 0.2);">
+          <div class="container-fluid">
+          <div class="navbar-header">
+              <a class="navbar-brand" href="#" style="color: rgb(255, 255, 255);">城市数据展示平台</a>
+          </div>
+          <div>
+              <ul class="nav navbar-nav">
+                  <li class="active"><a href="#" style="color: rgb(0, 0, 0);">首页</a></li>
+                  <li><a href="/forum.html" style="color: rgb(255, 255, 255);">城市论坛</a></li>
+              </ul>
+          </div>
+          </div>
+      </nav>
+
+      <!-- 轮播效果 -->
+      <div id="myCarousel" class="carousel slide" style="height: 700px;width: 100%;">
+          <!-- 轮播（Carousel）指标 -->
+          <ol class="carousel-indicators">
+              <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+              <li data-target="#myCarousel" data-slide-to="1"></li>
+              <li data-target="#myCarousel" data-slide-to="2"></li>
+              <li data-target="#myCarousel" data-slide-to="3"></li>
+          </ol>   
+          <!-- 轮播（Carousel）项目 -->
+          <div class="carousel-inner">
+              <div class="item active">
+                  <!-- 柱状图容器 -->
+                  <div id="one" style="background-color: rgba(255, 255, 255,0.8);width: 800px;height: 600px;margin-left: 350px;" alt="First slide"></div>
+                  <div class="carousel-caption" style="padding-bottom: 1px;">城市路口8点-12点各时段经过车辆统计（/辆）</div>
+              </div>
+              <div class="item">
+                  <!-- 折线图容器 -->
+                  <div id="two" style="background-color: rgba(255, 255, 255,0.8);width: 800px;height: 600px;margin-left: 350px;" alt="Second slide"></div>
+                  <div class="carousel-caption" style="padding-bottom: 1px;">2022年某城市上半年用电情况（/千万瓦）</div>
+              </div>
+              <div class="item">
+                <!-- 饼图容器 -->
+                  <div id="three" style="background-color: rgba(255, 255, 255,0.8);width: 800px;height: 600px;margin-left: 350px;" alt="Third slide"></div>
+                  <div class="carousel-caption">2022年某城市政府上半年财政支出情况（/万元）</div>
+              </div>
+              <div class="item">
+                <!-- 散点图容器 -->
+                  <div id="four" style="background-color: rgba(255, 255, 255,0.8);width: 800px;height: 600px;margin-left: 350px;" alt="Fourth slide"></div>
+                  <div class="carousel-caption" style="padding-bottom: 1px;">2022年城市常驻人口收入情况（/元）</div>
+              </div>
+          </div>
+          <!-- 轮播（Carousel）导航 -->
+          <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+              <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+          </a>
+          <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+              <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+          </a>
+      </div>
+    </div>
+
+    <!-- 柱状图数据 -->
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('one'));
+  
+        // 指定图表的配置项和数据
+        var option = {
+              grid: {
+              left: '10%',
+              right: '10%',
+              bottom: '10%',
+              containLabel: true
+            },
+             xAxis: {
+              type: 'category',
+              data: []
+            },
+             yAxis: {
+               type: 'value'
+            },
+              series: [
+                {
+                  data: [],
+                  type: 'bar',
+                  showBackground: true,
+                  backgroundStyle: {
+                    color: 'rgba(0, 0, 0, 0.5)'
+                  }
+                }
+              ]
+            };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart1.setOption(option);
+        // 异步获取数据，注意fetch函数具有延时性
+        fetch("http://127.0.0.1:8099/datas").then(res=>res.json()).then(res=>{
+            myChart1.setOption({
+                xAxis:{
+                    data:res.xdata
+                },
+                series:[
+                    {
+                      data:res.ydata
+                    }                  
+                ]
+            })
+        })
+      </script>
+
+    <!--折线图数据 -->
+    <script type="text/javascript">
+        var myChart2 = echarts.init(document.getElementById('two'));
+        var option = {
+          title: {
+            text: ''
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            data: ['生活用电', '工业用电', '农业用电', '商业用电']
+          },
+          grid: {
+            left: '10%',
+            right: '10%',
+            top: '10%',
+            bottom: '8%',
+            containLabel: true
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            }
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: []
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [
+            {
+              name: '生活用电',
+              type: 'line',
+              stack: 'Total',
+              data: []
+            },
+            {
+              name: '工业用电',
+              type: 'line',
+              stack: 'Total',
+              data: []
+            },
+            {
+              name: '农业用电',
+              type: 'line',
+              stack: 'Total',
+              data: []
+            },
+            {
+              name: '商业用电',
+              type: 'line',
+              stack: 'Total',
+              data: []
+            }
+          ]
+        };
+        myChart2.setOption(option);
+        fetch("http://127.0.0.1:8099/datas1").then(res1=>res1.json()).then(res1=>{
+            myChart2.setOption({
+                xAxis:{
+                    data:res1.xdata1
+                },
+                series:[
+                    {
+                      name:'生活用电',
+                      data:res1.ydata1
+                    },
+                    {
+                      name:'工业用电',
+                      data:res1.ydata2
+                    }, 
+                    {
+                      name:'农业用电',
+                      data:res1.ydata3
+                    }, 
+                    {
+                      name:'商业用电',
+                      data:res1.ydata4
+                    }                  
+                ]
+            })
+        })
+      </script>
+    
+    <!-- 饼图数据 -->
+    <script type="text/javascript">
+      var myChart3 = echarts.init(document.getElementById('three'));
+      var option = {
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        top: '5%',
+        left: 'center'
+      },
+      series: [
+        {
+          name: 'Access From',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '40',
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: false
+          },
+          data: [
+            { value: [], name: '城市建设' },
+            { value: [], name: '文化建设' },
+            { value: [], name: '医疗卫生' },
+            { value: [], name: '公共服务' },
+            { value: [], name: '教育支出' }
+          ]
+        }
+      ]
+    };
+      myChart3.setOption(option);
+      fetch("http://127.0.0.1:8099/datas2").then(res2=>res2.json()).then(res2=>{
+            myChart3.setOption({
+              series:[{
+                data:[
+                  
+              {
+                name:'城市建设',
+                value:res2.ydata1
+              },
+              {
+                name:'文化建设',
+                value:res2.ydata2
+              }, 
+              {
+                name:'医疗卫生',
+                value:res2.ydata3
+              }, 
+              {
+                name:'公共服务',
+                value:res2.ydata4
+              },
+              {
+                name:'教育支出',
+                value:res2.ydata5
+              }  
+                ]
+              }]                
+            })
+        })
+    </script>
+
+    <!-- 散点图数据 -->
+    <script type="text/javascript">
+      var myChart4 = echarts.init(document.getElementById('four'));
+      var option = {
+        xAxis: {},
+        yAxis: {},
+        series: [
+          {
+            symbolSize: 20,
+            data: [
+              [25, 8000],
+              [20, 4000],
+              [23, 10000],
+              [21, 5000],
+              [26, 8000],
+              [34, 6000],
+              [20, 4000],
+              [30, 13000],
+              [25, 13000],
+              [26, 26000],
+              [25, 8000],
+              [34, 17000],
+              [34, 15000],
+              [36, 16000],
+              [37, 13000],
+              [28, 9000],
+              [35, 7000],
+              [39, 6000],
+              [39, 29000],
+              [40, 8000],
+              [45, 20000],
+              [50, 2500],
+              [44, 6000],
+              [20, 4000],
+              [30, 13000],
+              [35, 13000],
+              [26, 26000],
+              [35, 8000],
+              [34, 17000],
+              [30, 15000],
+              [36, 16000],
+              [20, 4000],
+              [30, 15000],
+              [25, 13000],
+              [27, 26000],
+              [25, 8000],
+              [34, 7000],
+              [34, 15000],
+              [36, 16000],
+              [37, 13000],
+              [28, 9000],
+              [35, 7000],
+              [39, 6000],
+              [39, 29000],
+              [40, 8000],
+              [45, 20000],
+            ],
+            type: 'scatter'
+          }
+        ]
+      };
+      myChart4.setOption(option);
+    </script>
+
+  </body>
+</html>
